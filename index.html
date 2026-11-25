@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emre - Hack</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background-color: #000000;
+      color: #ff1e1e;
+      font-family: monospace;
+      overflow: hidden;
+    }
+
+    /* İlk Giriş Ekranı */
+    #giris-ekrani {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      background: radial-gradient(circle at top, #3b0d26 0%, #160510 65%, #090106 100%);
+      font-family: system-ui, -apple-system, sans-serif;
+      color: #fff0f6;
+      overflow: hidden;
+    }
+
+    .kalp-arkaplan {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      font-size: 28px;
+      opacity: 0.22;
+      word-break: break-all;
+      line-height: 1.5;
+      padding: 10px;
+      user-select: none;
+    }
+
+    .giris-kutu {
+      position: relative;
+      z-index: 2;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 130, 180, 0.35);
+      backdrop-filter: blur(8px);
+      border-radius: 24px;
+      padding: 36px 28px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .ana-kalp {
+      font-size: 64px;
+      line-height: 1.1;
+      margin-bottom: 14px;
+      animation: nabiz 1.4s infinite ease-in-out;
+    }
+
+    @keyframes nabiz {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+    }
+
+    .giris-soru {
+      font-size: 26px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 28px;
+      text-shadow: 0 2px 12px rgba(255, 77, 141, 0.45);
+    }
+
+    .buton-grubu {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .secim-btn {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 28px;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .secim-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+    }
+
+    .secim-btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-evet {
+      background: linear-gradient(135deg, #ff4d8d, #ff1e56);
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(255, 30, 86, 0.4);
+    }
+
+    .btn-hayir {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffd6e7;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    /* Şaka Alanı */
+    #saka-alani {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      background-color: #000000;
+    }
+
+    #matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 6;
+    }
+
+    .ekran {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 7;
+      text-align: center;
+      padding-top: 38vh;
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .ortali {
+      padding-top: 32vh;
+    }
+
+    .emoji-ekran {
+      padding-top: 26vh;
+    }
+
+    .gizli {
+      display: none !important;
+    }
+
+    .baslik {
+      font-size: 26px;
+      font-weight: bold;
+      color: #ff1e1e;
+      text-shadow: 0 0 12px #ff0000;
+    }
+
+    .alt {
+      margin-top: 14px;
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      color: #ff3b3b;
+    }
+
+    .sayac {
+      font-size: 86px;
+      font-weight: bold;
+      color: #ff1e1e;
+    }
+
+    .sakaydi {
+      font-size: 46px;
+      font-weight: bold;
+      color: #00ff41;
+      text-shadow: 0 0 14px #00ff41;
+    }
+
+    .emoji {
+      font-size: 120px;
+      line-height: 1;
+    }
+
+    @-webkit-keyframes titreme {
+      0% { -webkit-transform: translate(0, 0) rotate(0deg); }
+      25% { -webkit-transform: translate(-14px, -10px) rotate(-2deg); }
+      50% { -webkit-transform: translate(14px, 10px) rotate(2deg); }
+      75% { -webkit-transform: translate(-12px, 12px) rotate(-2deg); }
+      100% { -webkit-transform: translate(0, 0) rotate(0deg); }
+    }
+
+    @keyframes titreme {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(-14px, -10px) rotate(-2deg); }
+      50% { transform: translate(14px, 10px) rotate(2deg); }
+      75% { transform: translate(-12px, 12px) rotate(-2deg); }
+      100% { transform: translate(0, 0) rotate(0deg); }
+    }
+
+    .titret {
+      -webkit-animation: titreme 0.14s infinite;
+      animation: titreme 0.14s infinite;
+    }
+  </style>
+</head>
+<body>
+  <!-- İlk Giriş Ekranı -->
+  <div id="giris-ekrani">
+    <div class="kalp-arkaplan" aria-hidden="true">
+      💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗
+      💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗
+      💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗
+      💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗
+      💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗 💓 💕 💖 💗
+    </div>
+    <div class="giris-kutu">
+      <div class="ana-kalp">💓</div>
+      <div class="giris-soru">Emreyi Seviyormusun ?</div>
+      <div class="buton-grubu">
+        <button id="btn-evet" class="secim-btn btn-evet" type="button">Evet</button>
+        <button id="btn-hayir" class="secim-btn btn-hayir" type="button">Hayır</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Şaka Alanı -->
+  <div id="saka-alani" class="gizli">
+    <canvas id="matrix"></canvas>
+
+    <div id="e1" class="ekran">
+      <div class="baslik">EMRE TARAFINDAN HACKLENDİN</div>
+      <div class="alt">İTAAT ET</div>
+    </div>
+
+    <div id="e2" class="ekran ortali gizli">
+      <div id="s1" class="sayac">10</div>
+    </div>
+
+    <div id="e3" class="ekran ortali gizli">
+      <div class="sakaydi">ŞAKAYDI</div>
+    </div>
+
+    <div id="e4" class="ekran ortali gizli">
+      <div id="s2" class="sayac">3</div>
+    </div>
+
+    <div id="e5" class="ekran emoji-ekran gizli">
+      <div class="emoji">🖕</div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var canvas = document.getElementById("matrix");
+      var ctx = null;
+      try {
+        ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
+      } catch (e) {}
+
+      var harfler = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      var fs = 16;
+      var drops = [];
+
+      function matrixKur() {
+        if (!canvas) return;
+        var w = window.innerWidth || document.documentElement.clientWidth || 360;
+        var h = window.innerHeight || document.documentElement.clientHeight || 640;
+        canvas.width = w;
+        canvas.height = h;
+        var cols = Math.max(1, Math.floor(w / fs));
+        drops = [];
+        for (var i = 0; i < cols; i++) drops[i] = 1;
+      }
+
+      window.addEventListener("resize", matrixKur);
+
+      if (ctx) {
+        setInterval(function () {
+          try {
+            if (!drops.length) matrixKur();
+            ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#00ff41";
+            ctx.font = fs + "px monospace";
+            for (var i = 0; i < drops.length; i++) {
+              var ch = harfler.charAt(Math.floor(Math.random() * harfler.length));
+              ctx.fillText(ch, i * fs, drops[i] * fs);
+              if (drops[i] * fs > canvas.height && Math.random() > 0.97) drops[i] = 0;
+              drops[i]++;
+            }
+          } catch (e) {}
+        }, 40);
+      }
+
+      var mp3 = null;
+      var mp3Yollar = ["gulush.mp3", "./gulush.mp3"];
+      var yolIdx = 0;
+      var sesCalmalimi = false;
+      var sakaBasladi = false;
+
+      function sesBagla(audio) {
+        if (!audio) return;
+        audio.loop = true;
+        audio.preload = "auto";
+        audio.volume = 1.0;
+
+        audio.addEventListener("canplaythrough", function () {
+          if (sesCalmalimi && audio.paused) {
+            var p = audio.play();
+            if (p && p.catch) p.catch(function () {});
+          }
+        });
+
+        audio.addEventListener("error", function () {
+          yolIdx++;
+          if (yolIdx < mp3Yollar.length) {
+            mp3 = new Audio(mp3Yollar[yolIdx]);
+            sesBagla(mp3);
+          }
+        });
+      }
+
+      function sesHazirla() {
+        if (mp3) return mp3;
+        try {
+          mp3 = new Audio(mp3Yollar[yolIdx]);
+          sesBagla(mp3);
+        } catch (e) {}
+        return mp3;
+      }
+
+      function sesiBaslat() {
+        sesCalmalimi = true;
+        var audio = sesHazirla();
+        if (!audio) return;
+        try {
+          var p = audio.play();
+          if (p && p.catch) p.catch(function () {});
+        } catch (e) {}
+      }
+
+      function sesiDurdur() {
+        sesCalmalimi = false;
+        if (!mp3) return;
+        try {
+          mp3.pause();
+          mp3.currentTime = 0;
+        } catch (e) {}
+      }
+
+      function ekranGoster(id, ekstra) {
+        var ids = ["e1", "e2", "e3", "e4", "e5"];
+        for (var i = 0; i < ids.length; i++) {
+          var el = document.getElementById(ids[i]);
+          if (!el) continue;
+          if (ids[i] === id) {
+            el.className = ekstra ? ("ekran " + ekstra) : "ekran";
+          } else {
+            el.className = "ekran gizli";
+          }
+        }
+      }
+
+      function sakayiBaslat() {
+        if (sakaBasladi) return;
+        sakaBasladi = true;
+
+        var giris = document.getElementById("giris-ekrani");
+        var sakaAlani = document.getElementById("saka-alani");
+        if (giris) giris.className = "gizli";
+        if (sakaAlani) sakaAlani.className = "";
+
+        matrixKur();
+        ekranGoster("e1", "");
+        sesiBaslat();
+
+        var sn = 0;
+        var s1 = document.getElementById("s1");
+        var s2 = document.getElementById("s2");
+
+        setInterval(function () {
+          sn++;
+          if (sn <= 8) {
+            ekranGoster("e1", "");
+            sesiBaslat();
+          } else if (sn <= 18) {
+            ekranGoster("e2", "ortali");
+            sesiBaslat();
+            if (s1) s1.textContent = String(19 - sn);
+          } else if (sn <= 21) {
+            ekranGoster("e3", "ortali");
+            sesiDurdur();
+          } else if (sn <= 24) {
+            ekranGoster("e4", "ortali");
+            sesiBaslat();
+            if (s2) s2.textContent = String(25 - sn);
+          } else {
+            sesiDurdur();
+            ekranGoster("e5", "emoji-ekran titret");
+          }
+        }, 1000);
+      }
+
+      var btnEvet = document.getElementById("btn-evet");
+      var btnHayir = document.getElementById("btn-hayir");
+
+      if (btnEvet) btnEvet.addEventListener("click", sakayiBaslat);
+      if (btnHayir) btnHayir.addEventListener("click", sakayiBaslat);
+    })();
+  </script>
+</body>
+</html>
